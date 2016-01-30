@@ -45,7 +45,14 @@ function addLetter(letter, arr) {
 }
 
 
-
+    //redefines the width and margin of the element that displays the alphabet
+    function divResize(numberoOfLetters){
+        var divWidth= document.getElementById("available-letters").width;
+        var currentWidth = (numberoOfLetters * 57px) + ((numberoOfLetters-1) * 2);
+        var newMargin = (divWidth - currentWidth) / 2; 
+    document.getElementById('available-letters-list').css.attr('width', currentWidth);
+    document.getElementById('available-letters-list').css.attr('margin-left', newMargin + "!important");
+    }
 
 
     // clear the input text box
