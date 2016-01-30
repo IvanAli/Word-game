@@ -24,8 +24,15 @@ function addLetter(letter) {
     return letters;
 }
 
+function addLetters(word) {
+    letters.push(word);
+    letters.sort();
+    return letters;
+}
+
 module.exports = {
     letters: letters,
     removeLetter: removeLetter,
-    addLetter: addLetter
+    addLetter: addLetter,
+    addLetters: addLetters
 }

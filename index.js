@@ -16,6 +16,7 @@ app.set('view engine', 'handlebars');
 loader.fillDictionary('words');/*/usr/share/dict*/
 
 var words = loader.getRandomWordSet(5);
+var ipaddress;
 
 app.get('/', function(request, response) {
     response.render('pickname', {host: http.address().address});
@@ -23,7 +24,7 @@ app.get('/', function(request, response) {
 
 app.get('/game', function(request, response) {
     var nickname = request.query['nickname'];
-    var player = nicknameTable.addEntry(nickname);
+    var player = nicknameTable.addEntry(nickname, ipaddress);
     response.render('game', {player: player});
 });
 
@@ -40,7 +41,17 @@ function restoreLetters(word, time) {
     }, time);
 }
 
+function restoreLetters(word) {
+    for (var i = 0; i < word.length; i++) {
+        var arr = alphabet.addLetter(word[i]);
+    }
+    io.emit('alphabet update', arr);
+}
+
 io.on('connection', function(socket) {
+    // set the ip address
+    ipaddress = socket.handshake.address;
+
     // send the alphabet to every user that gets connected (this is the full alphabet)
     io.emit('alphabet update', alphabet.letters);
     socket.on('alphabet update', function(arr) {
@@ -50,8 +61,7 @@ io.on('connection', function(socket) {
     // send the set of random words to the user
     io.emit('wordset', words);
     // console.log(socket.conn);
-    var address = socket.handshake.address;
-    console.log("Connection from: " + address);
+    console.log("Connection from: " + ipaddress);
 
     console.log('User connected');
     socket.on('disconnect', function() {
@@ -59,9 +69,18 @@ io.on('connection', function(socket) {
     });
 
     socket.on('new word', function(index) {
-        restoreLetters(words[index], 1000);
+        // restoreLetters(words[index], 1000);
+        restoreLetters(words[index]);
         words[index] = loader.getRandomWord();
         io.emit('new word', words, index);
+    });
+
+    socket.on('update counter', function(id) {
+        console.log(id);
+        console.log(nicknameTable.getPlayer(id).ip);
+        var wc = nicknameTable.increaseWordCounter(id);
+        // console.log(nicknameTable.getPlayer(id).wordCounter);
+        io.emit('update counter', nicknameTable.getPlayer(id));
     });
     // socket.on('key add', function(letter) {
     //     // remove the letter typed in from the alphabet

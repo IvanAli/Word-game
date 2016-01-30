@@ -1,4 +1,5 @@
-{{player.nickname}} {{player.id}} <span style="display: none;" id="playercolor">{{player.color}}</span>
+{{player.nickname}} <span id="playerId">{{player.id}}</span> <span style="display: none;" id="playercolor">{{player.color}}</span>
+<div id="wordCounter">{{player.wordCounter}}</div>
 <h2>Available letters</h2>
 <div id="letters"></div>
 <h2>Words</h2>
@@ -43,7 +44,7 @@
 
     function isWordDone(text) {
         var arr = [];
-        var regex = new RegExp('^' + text);
+        var regex = new RegExp('^' + text.toLowerCase());
         for (var i = 0; i < currWords.length; i++) {
             if (regex.test(currWords[i].toLowerCase()) && currWords[i].length == text.length) {
                 return i;
@@ -52,12 +53,20 @@
         return -1;
     }
 
+    function normalizeWord(index) {
+        var word = document.getElementById('word' + index);
+        word.innerHTML = htmlStripper(word.innerHTML);
+    }
+
     function getMatchingWordsIndex(text) {
         var arr = [];
-        var regex = new RegExp('^' + text);
+        var regex = new RegExp('^' + text.toLowerCase());
         for (var i = 0; i < currWords.length; i++) {
             if (regex.test(currWords[i].toLowerCase())) {
                 arr.push(i);
+            }
+            else {
+                normalizeWord(i);
             }
         }
         return arr;
@@ -183,12 +192,20 @@
         console.log('new words array: ' + currWords);
     });
 
+    // update a player's word counter
+    socket.on('update counter', function(player) {
+        var wcounter = document.getElementById('wordCounter');
+        wcounter.innerHTML = player.wordCounter;
+    });
+
     $("#word").keyup(function(event) {
         var text = document.getElementById('word').value;
         colorWord(text);
         var index = isWordDone(text);
         if (index != -1) {
             socket.emit('new word', index);
+            var playerId = document.getElementById('playerId').innerHTML;
+            socket.emit('update counter', playerId);
         }
     });
 
