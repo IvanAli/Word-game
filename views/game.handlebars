@@ -1,4 +1,4 @@
-{{nickname}}
+{{player.nickname}} {{player.id}} <span style="display: none;" id="playercolor">{{player.color}}</span>
 <h2>Available letters</h2>
 <div id="letters"></div>
 <h2>Words</h2>
@@ -40,6 +40,10 @@
 
 
 <script>
+
+
+
+
     function getMatchingWordsIndex(text) {
         var arr = [];
         var regex = new RegExp('^' + text);
@@ -68,16 +72,15 @@
 
             // free the text from any html tags
             wordTxt = htmlStripper(wordTxt);
-
             if (text.length > 0) {
                 var html = '';
-                html = '<span style="color: red;">';
+                var color = document.getElementById('playercolor').innerHTML;
+                html = '<span style="color: ' + color + ';">';
                 // alert(wordTxt.length);
                 for (var j = 0; j < wordTxt.length; j++) {
                     html += wordTxt[j];
                     if (j == text.length - 1) html += '</span>';
                 }
-                console.log(html);
                 word.innerHTML = '';
                 word.innerHTML = html;
             }

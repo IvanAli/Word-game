@@ -23,8 +23,8 @@ app.get('/', function(request, response) {
 
 app.get('/game', function(request, response) {
     var nickname = request.query['nickname'];
-    var id = nicknameTable.addEntry(nickname);
-    response.render('game', {id: id, nickname: nickname});
+    var player = nicknameTable.addEntry(nickname);
+    response.render('game', {player: player});
 });
 
 io.on('connection', function(socket) {
