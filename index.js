@@ -27,6 +27,19 @@ app.get('/game', function(request, response) {
     response.render('game', {player: player});
 });
 
+function restoreLetters(word, time) {
+    var i = 0;
+    var timer = setInterval(function() {
+        if (i < word.length) {
+            var arr = alphabet.addLetter(word[i++]);
+            io.emit('alphabet update', arr);
+        }
+        else {
+            clearInterval(timer);
+        }
+    }, time);
+}
+
 io.on('connection', function(socket) {
     // send the alphabet to every user that gets connected (this is the full alphabet)
     io.emit('alphabet update', alphabet.letters);
@@ -43,6 +56,12 @@ io.on('connection', function(socket) {
     console.log('User connected');
     socket.on('disconnect', function() {
         console.log('User disconnected');
+    });
+
+    socket.on('new word', function(index) {
+        restoreLetters(words[index], 1000);
+        words[index] = loader.getRandomWord();
+        io.emit('new word', words, index);
     });
     // socket.on('key add', function(letter) {
     //     // remove the letter typed in from the alphabet

@@ -41,8 +41,16 @@
 
 <script>
 
-
-
+    function isWordDone(text) {
+        var arr = [];
+        var regex = new RegExp('^' + text);
+        for (var i = 0; i < currWords.length; i++) {
+            if (regex.test(currWords[i].toLowerCase()) && currWords[i].length == text.length) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     function getMatchingWordsIndex(text) {
         var arr = [];
@@ -94,7 +102,7 @@
     function removeLetter(letter, arr) {
         var obj = {};
         var index = arr.indexOf(letter);
-        console.log("deleted index " + index);
+        // console.log("deleted index " + index);
         if (index < 0) {
             obj.arr = arr;
             obj.success = false;
@@ -165,9 +173,23 @@
         wordsDiv.appendChild(ul);
     });
 
+    // set a new random word
+    socket.on('new word', function(words, index) {
+        currWords = words;
+        var wordli = document.getElementById('word' + index);
+        wordli.innerHTML = words[index];
+        var inputtxt = document.getElementById('word');
+        inputtxt.value = '';
+        console.log('new words array: ' + currWords);
+    });
+
     $("#word").keyup(function(event) {
         var text = document.getElementById('word').value;
         colorWord(text);
+        var index = isWordDone(text);
+        if (index != -1) {
+            socket.emit('new word', index);
+        }
     });
 
     // triggered event after user input
@@ -192,30 +214,7 @@
             var arr = alphabetStructure.arr;
             socket.emit('alphabet update', arr);
         }
-
-        // find matching words to what's been typed and color them
-
         return success;
-
-
-        // following code won't run, trying stuff
-    //     console.log(text);
-    //     var word = document.getElementById("w").innerHTML;
-    //     console.log(word);
-    //
-    //     // var text = document.getElementById("word").value;
-    //     var feedback = document.getElementById("feedback");
-    //     var ans = checkSpelling(text, word);
-    //     if (ans) feedback.innerHTML = "You are doing so well I'm proud of you, son";
-    //     else feedback.innerHTML = "boo";
-
     });
-
-    function checkSpelling(a, b) {
-        for (var i = 0; i < a.length; i++) {
-            if (a[i] != b[i]) return false;
-        }
-        return true;
-    }
 
 </script>
