@@ -4,8 +4,16 @@ exports.letters = ['a', 'a', 'a', 'b', 'b', 'c', 'c', 'd', 'd', 'e', 'e', 'e',
 's', 't', 't', 'u', 'u', 'u', 'v', 'v', 'w', 'w', 'x', 'x', 'y', 'y', 'z', 'z'];
 
 exports.removeLetter = function(letter, arr) {
+    var obj = {};
     var index = arr.indexOf(letter);
-    if (index < 0) return arr;
+    console.log(index);
+    if (index < 0) {
+        obj.arr = arr;
+        obj.success = false;
+        return obj;
+    }
     arr.splice(arr.indexOf(letter), 1);
-    return arr;
+    obj.arr = arr;
+    obj.success = false;
+    return obj;
 }

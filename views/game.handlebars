@@ -12,29 +12,56 @@
 
 </p> -->
 
-<input type="text" id="word" onkeyup="provideFeedback(event)">
+<input type="text" id="word" onkeypress="provideFeedback(event)">
 <div id="feedback"></div>
 
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
-<script src="js/alphabetHandler.js"></script>
+<!-- <script src="js/alphabetHandler.js"></script> -->
 <script>
+
+
+
+function removeLetter(letter, arr) {
+    var obj = {};
+    var index = arr.indexOf(letter);
+    console.log(index);
+    if (index < 0) {
+        obj.arr = arr;
+        obj.success = false;
+        return obj;
+    }
+    arr.splice(arr.indexOf(letter), 1);
+    obj.arr = arr;
+    obj.success = true;
+    return obj;
+}
+
+
+
+
+
+
     // clear the input text box
     document.getElementById("word").value = "";
 
     // init client socket
     var socket = io();
-
+    var currAlphabet;
     // update the alphabet after a player has used a letter
     socket.on('alphabet update', function(alphabet) {
+        currAlphabet = alphabet;
+
         var lettersDiv = document.getElementById('letters');
+        // alert(alphabet);
         lettersDiv.innerHTML = '';
         var ul = document.createElement('ul');
         for (var i = 0; i < alphabet.length; i++) {
             var li = document.createElement('li');
             ul.appendChild(li);
             li.innerHTML = alphabet[i];
+            console.log(alphabet[i]);
         }
         lettersDiv.appendChild(ul);
     });
@@ -53,29 +80,33 @@
     });
 
     // triggered event after user input
-    function provideFeedback(event) {
+    $("#word").keypress(function(event) {
         var text = document.getElementById("word").value;
-        var lastLetter = text[text.length - 1];
-        if (event.keyCode == 8) {
+        var lastLetter = String.fromCharCode(event.which);
+        // alert(event.which);
+        if (event.which == 8) {
             // backslash key was pressed
 
         }
         else {
-            socket.emit('key add', lastLetter);
-            return false;
+            var alphabetStructure = removeLetter(lastLetter, currAlphabet);
+            var success = alphabetStructure.success;
+            var arr = alphabetStructure.arr;
+            socket.emit('alphabet update', arr);
+            return success;
         }
 
         // following code won't run, trying stuff
-        console.log(text);
-        var word = document.getElementById("w").innerHTML;
-        console.log(word);
-
-        // var text = document.getElementById("word").value;
-        var feedback = document.getElementById("feedback");
-        var ans = checkSpelling(text, word);
-        if (ans) feedback.innerHTML = "You are doing so well I'm proud of you son";
-        else feedback.innerHTML = "boo";
-    }
+    //     console.log(text);
+    //     var word = document.getElementById("w").innerHTML;
+    //     console.log(word);
+    //
+    //     // var text = document.getElementById("word").value;
+    //     var feedback = document.getElementById("feedback");
+    //     var ans = checkSpelling(text, word);
+    //     if (ans) feedback.innerHTML = "You are doing so well I'm proud of you son";
+    //     else feedback.innerHTML = "boo";
+    });
 
     function checkSpelling(a, b) {
         for (var i = 0; i < a.length; i++) {
