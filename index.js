@@ -26,11 +26,10 @@ io.on('connection', function(socket) {
     socket.on('disconnect', function() {
         console.log('User disconnected');
     });
-    socket.on('key add', function(key) {
-        console.log('key entered:' + key);
-        var alphabet = alphabet.reduceAlphabet(key, alphabet.letters);
-        console.log(alphabet);
-        // io.emit('alphabet update', alphabet);
+    socket.on('key add', function(letter) {
+        // remove the letter typed in from the alphabet
+        var reducedAlphabet = alphabet.removeLetter(letter, alphabet.letters);
+        io.emit('alphabet update', reducedAlphabet);
     });
 });
 
