@@ -1,6 +1,7 @@
 var express = require('express');
 var loader = require('./libs/loader.js');
 var alphabet = require('./libs/alphabet.js');
+var nicknameTable = require('./libs/nicknameTable.js');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -12,12 +13,18 @@ app.set('view engine', 'handlebars');
 // define set of words
 
 
-loader.fillDictionary('/usr/share/dict/words');
+loader.fillDictionary('words');/*/usr/share/dict*/
 
 var words = loader.getRandomWordSet(5);
 
 app.get('/', function(request, response) {
-    response.render('game');
+    response.render('pickname', {host: http.address().address});
+});
+
+app.get('/game', function(request, response) {
+    var nickname = request.query['nickname'];
+    var id = nicknameTable.addEntry(nickname);
+    response.render('game', {id: id, nickname: nickname});
 });
 
 io.on('connection', function(socket) {
@@ -29,7 +36,7 @@ io.on('connection', function(socket) {
 
     // send the set of random words to the user
     io.emit('wordset', words);
-
+    // console.log(socket.conn);
     var address = socket.handshake.address;
     console.log("Connection from: " + address);
 

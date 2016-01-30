@@ -1,28 +1,45 @@
-<h1>Available letters</h1>
+{{nickname}}
+<h2>Available letters</h2>
 <div id="letters"></div>
-<h1>Words</h1>
+<h2>Words</h2>
 <div id="words"></div>
-<!-- <p id="w">
-
-
-{{#each words}}
-  <li>{{this}}</li>
-  {{/each}}
-
-
-</p> -->
-
-<input type="text" id="word">
+<input type="text" id="word" placeholder="Type a word!">
 <div id="feedback"></div>
 
+<style>
+    /*awesome css*/
+    @import url(https://fonts.googleapis.com/css?family=Poppins);
+    @import url(https://fonts.googleapis.com/css?family=Rubik);
+    .body{font-family:'Rubik', sans-serif; font-size: 18pt; color:#777777;}
+    h1, h2, h3, h4, h5, h6 {font-family:'Rubik', sans-serif; font-size: 22pt; color:#333333; text-align: center; margin:2% 0 1% 0;}
+    #letters{font-family:'Poppins'; margin: 0 0 0 25%; width:50%; display:inline-block; }
+    #available-letters-list{font-family:'Poppins';}
+    .letter{font-family:'Poppins'; background: #eeeeee; border-radius: 5px; border: 2px solid gray; margin: 2px; width:53px; color:#777777; text-align: center; font-size:24pt;}
+    #words{font-family:'Rubik'; width:54%; display:inline-block; text-align: center;   margin: 0 0 0 23%;}
+    #words-list {font-family:'Rubik'; }
+    ul{list-style-type: none; margin:auto; padding: 0;}
+    .word{font-family:'Rubik'; background: #eeeeee; border-radius: 5px; border: 2px solid gray; margin: 2px; width:180px; color:#777777; text-align:center; font-size:21pt; }
+    #content{font-family:'Rubik'}
+    #input-form{font-family:'Rubik'; margin:auto; }
+    #word{font-family: 'Rubik'; width: 25%; margin: 5% 0 0 37%; height: 80px; font-size: 40pt; border-radius: 8px; color: #777777; display: block;}
+    #feedback{font-family:'Rubik'; font-size: 18pt; color:#dadada;}
 
+    li {display:inline-block; margin: 0 4px 0 4px;}
+
+    #words li {font-family:'Rubik'; background: #eeeeee; border-radius: 5px; border: 2px solid gray; margin: 2px; width:180px; color:#777777; text-align:center; font-size:21pt; }
+    #letters li {font-family:'Poppins'; background: #eeeeee; border-radius: 5px; border: 2px solid gray; margin: 2px; width:53px; color:#777777; text-align: center; font-size:24pt;}
+
+    ::-webkit-input-placeholder { text-align: center;}
+    :-moz-placeholder { /* Firefox 18- */  text-align: center;  }
+    ::-moz-placeholder {  /* Firefox 19+ */   text-align: center;  }
+    :-ms-input-placeholder {     text-align: center; }
+</style>
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
 <!-- <script src="js/alphabetHandler.js"></script> -->
 
 
 <script>
-
     function getMatchingWordsIndex(text) {
         var arr = [];
         var regex = new RegExp('^' + text);
@@ -70,10 +87,11 @@
         }
     }
 
+
     function removeLetter(letter, arr) {
         var obj = {};
         var index = arr.indexOf(letter);
-        console.log(index);
+        console.log("deleted index " + index);
         if (index < 0) {
             obj.arr = arr;
             obj.success = false;
@@ -85,12 +103,26 @@
         return obj;
     }
 
+
+
     function addLetter(letter, arr) {
         arr.push(letter);
         arr.sort();
         return arr;
     }
 
+
+    //redefines the width and margin of the element that displays the alphabet
+    function divResize(numberoOfLetters){
+        var divWidth = document.getElementById("letters").style.width;
+        console.log("divWidth: " + divWidth);
+        //var currentWidth = (numberoOfLetters * 57px) + ((numberoOfLetters-1) * 2);
+        //console.log("currentwidth: " + currentWidth);
+        //var newMargin = (divWidth - currentWidth) / 2;
+        //console.log("newmargin: " + newMargin);
+        //document.getElementById('available-letters-list').css.attr('width', currentWidth);
+        //document.getElementById('available-letters-list').css.attr('margin-left', newMargin + "!important");
+    }
 
     // clear the input text box
     document.getElementById("word").value = "";
@@ -137,6 +169,7 @@
 
     // triggered event after user input
     $("#word").keypress(function(event) {
+        divResize(currAlphabet.length);
         var text = document.getElementById('word').value;
         var lastLetter = String.fromCharCode(event.which);
         var success;
@@ -170,8 +203,9 @@
     //     // var text = document.getElementById("word").value;
     //     var feedback = document.getElementById("feedback");
     //     var ans = checkSpelling(text, word);
-    //     if (ans) feedback.innerHTML = "You are doing so well I'm proud of you son";
+    //     if (ans) feedback.innerHTML = "You are doing so well I'm proud of you, son";
     //     else feedback.innerHTML = "boo";
+
     });
 
     function checkSpelling(a, b) {
@@ -180,4 +214,5 @@
         }
         return true;
     }
+
 </script>
