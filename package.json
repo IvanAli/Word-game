@@ -1,0 +1,25 @@
+{
+  "name": "wordgame",
+  "version": "1.0.0",
+  "description": "One day game",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.13.4",
+    "express3-handlebars": "^0.5.2",
+    "socket.io": "^1.4.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IvanAli/Word-game.git"
+  },
+  "author": "Ivan & Aura",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/IvanAli/Word-game/issues"
+  },
+  "homepage": "https://github.com/IvanAli/Word-game#readme"
+}
