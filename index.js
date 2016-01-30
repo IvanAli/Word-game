@@ -22,7 +22,7 @@ app.get('/', function(request, response) {
 
 io.on('connection', function(socket) {
     // send the alphabet to every user that gets connected (this is the full alphabet)
-    io.emit('alphabet update', alphabet.letters);
+    io.emit('alphabet update', {arr: alphabet.letters, success: true});
 
     // send the set of random words to the user
     io.emit('wordset', words);
@@ -36,8 +36,9 @@ io.on('connection', function(socket) {
     });
     socket.on('key add', function(letter) {
         // remove the letter typed in from the alphabet
-        var reducedAlphabet = alphabet.removeLetter(letter, alphabet.letters);
-        io.emit('alphabet update', reducedAlphabet);
+        console.log("key pressed: " + letter);
+        var alphabetStructure = alphabet.removeLetter(letter, alphabet.letters);
+        io.emit('alphabet update', alphabetStructure);
     });
 });
 

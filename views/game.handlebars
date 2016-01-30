@@ -12,7 +12,7 @@
 
 </p> -->
 
-<input type="text" id="word" onkeyup="provideFeedback(event)">
+<input type="text" id="word" onkeypress="provideFeedback(event)">
 <div id="feedback"></div>
 
 
@@ -25,18 +25,27 @@
 
     // init client socket
     var socket = io();
-
+    var currAlphabet;
     // update the alphabet after a player has used a letter
-    socket.on('alphabet update', function(alphabet) {
+    socket.on('alphabet update', function(alphabetStructure) {
         var lettersDiv = document.getElementById('letters');
+        var success = alphabetStructure.success;
+        var alphabet = alphabetStructure.arr;
+        // alert(alphabet);
         lettersDiv.innerHTML = '';
         var ul = document.createElement('ul');
-        for (var i = 0; i < alphabet.length; i++) {
-            var li = document.createElement('li');
-            ul.appendChild(li);
-            li.innerHTML = alphabet[i];
-        }
-        lettersDiv.appendChild(ul);
+        currAlphabet = alphabetStructure;
+        // if (success === true) {
+            for (var i = 0; i < alphabet.length; i++) {
+                var li = document.createElement('li');
+                ul.appendChild(li);
+                li.innerHTML = alphabet[i];
+                console.log(alphabet[i]);
+            }
+            lettersDiv.appendChild(ul);
+        // }
+        // else {
+        // }
     });
 
     // get the random set of words to be played with
@@ -53,29 +62,31 @@
     });
 
     // triggered event after user input
-    function provideFeedback(event) {
+    $("#word").keypress(function(event) {
         var text = document.getElementById("word").value;
-        var lastLetter = text[text.length - 1];
-        if (event.keyCode == 8) {
+        var lastLetter = String.fromCharCode(event.which);
+        // alert(event.which);
+        if (event.which == 8) {
             // backslash key was pressed
 
         }
         else {
             socket.emit('key add', lastLetter);
-            return false;
+            return currAlphabet.success;
+            // return false;
         }
 
         // following code won't run, trying stuff
-        console.log(text);
-        var word = document.getElementById("w").innerHTML;
-        console.log(word);
-
-        // var text = document.getElementById("word").value;
-        var feedback = document.getElementById("feedback");
-        var ans = checkSpelling(text, word);
-        if (ans) feedback.innerHTML = "You are doing so well I'm proud of you son";
-        else feedback.innerHTML = "boo";
-    }
+    //     console.log(text);
+    //     var word = document.getElementById("w").innerHTML;
+    //     console.log(word);
+    //
+    //     // var text = document.getElementById("word").value;
+    //     var feedback = document.getElementById("feedback");
+    //     var ans = checkSpelling(text, word);
+    //     if (ans) feedback.innerHTML = "You are doing so well I'm proud of you son";
+    //     else feedback.innerHTML = "boo";
+    });
 
     function checkSpelling(a, b) {
         for (var i = 0; i < a.length; i++) {
