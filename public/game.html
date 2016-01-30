@@ -1,9 +1,37 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head></head>
-<body>
-    <p>{{word}}</p>
-</body>
+    <head>
+        <meta charset="utf-8"/>   
+        <link rel="stylesheet"  href="css/style.css" type="text/css"/>
+    </head>
+    <body>
 
+        <h2>Available letters</h2>
+        <div id="available-letters">
+            <ul id="available-letters-list" class="list">
+                <li class="letter">a</li>
+                <li class="letter">a</li>
+                <li class="letter">a</li>
+                <li class="letter">a</li>
+                <li class="letter">a</li>
+                <li class="letter">a</li>            
+            </ul>
+        </div>
 
+        <h2>Words</h2>
+        <div id="words">
+            <ul id="words-list" class="list"> 
+                <li class="word">Palabra</li>
+                <li class="word">Palabra</li>
+                <li class="word">Palabra</li>
+                <li class="word">Palabra</li>
+            </ul>
+        </div>
+        <div id="content">
+            <form id="input-form">
+                <input type="text" id="input-text" placeholder="Type a word!"></textarea>
+                <label id="feedback">FEEDBACK</label>
+            </form>
+        </div>
+    </body>
 </html>

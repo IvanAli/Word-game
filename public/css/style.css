@@ -1,0 +1,18 @@
+/*awesome css*/
+@import url(https://fonts.googleapis.com/css?family=Poppins);
+@import url(https://fonts.googleapis.com/css?family=Rubik);
+.body{font-family:'Rubik', sans-serif; font-size: 18pt; color:#777777;}
+h1, h2, h3, h4, h5, h6 {font-family:'Rubik', sans-serif; font-size: 22pt; color:#333333; text-align: center;}
+#available-letters{font-family:'Poppins'; margin: 0 0 0 25%; width:50%; display:inline-block; }
+#available-letters-list{font-family:'Poppins';}
+.letter{font-family:'Poppins'; background: #eeeeee; border-radius: 5px; border: 2px solid gray; margin: 0 2px 0 2px; width:53px; color:#777777; text-align: center; font-size:24pt;}
+#words{font-family:'Rubik'; width:50%; display:inline-block; text-align: center;}
+#words-list {font-family:'Rubik'; }
+.list{list-style-type: none; margin:auto; }
+.word{font-family:'Rubik'; background: #eeeeee; border-radius: 5px; border: 2px solid gray; margin: 0 2px 0 2px; width:180px; color:#777777; text-align:center; font-size:21pt; }
+#content{font-family:'Rubik'}
+#input-form{font-family:'Rubik'; margin:auto; }
+#input-text{font-family:'Rubik'; font-family: 'Rubik'; width:20%; margin:0 0 0 39%;  height: 80px;  font-size: 40pt;  border-radius: 8px;  color: #777777;}
+#feedback{font-family:'Rubik'}
+
+li {display:inline-block; margin: 0 4px 0 4px;}
