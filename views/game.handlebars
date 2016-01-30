@@ -1,7 +1,7 @@
 <h1>Available letters</h1>
-{{#each letters}}
-    {{this}}
-{{/each}}
+<div id="letters">
+
+</div>
 
 <p id="w">
 
@@ -13,16 +13,52 @@
 
 </p>
 
-<input type="text" id="word" onkeyup="provideFeedback()">
+<input type="text" id="word" onkeyup="provideFeedback(event)">
 <div id="feedback"></div>
 
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
+<script src="js/alphabetHandler.js"></script>
 <script>
+    // clear the input text box
     document.getElementById("word").value = "";
-    function provideFeedback() {
+
+    // init client socket
+    var socket = io();
+
+    // update the alphabet after a player has used a letter
+    socket.on('alphabet update', function(alphabet) {
+        var lettersDiv = document.getElementById('letters');
+        var ul = document.createElement('ul');
+
+        var letters = document.getElementById("letters");
+        for (var i = 0; i < alphabet.length; i++) {
+            var li = document.createElement('li');
+            ul.appendChild(li);
+            li.innerHTML = alphabet[i];
+        }
+        lettersDiv.appendChild(ul);
+    });
+
+    // triggered event after user input
+    function provideFeedback(event) {
         var text = document.getElementById("word").value;
+        var lastLetter = text[text.length - 1];
+        if (event.keyCode == 8) {
+            // backslash key was pressed
+
+        }
+        else {
+            socket.emit('key add', lastLetter);
+            return false;
+        }
+
+        // following code won't run, trying stuff
         console.log(text);
         var word = document.getElementById("w").innerHTML;
         console.log(word);
+
         // var text = document.getElementById("word").value;
         var feedback = document.getElementById("feedback");
         var ans = checkSpelling(text, word);
