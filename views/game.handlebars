@@ -137,6 +137,7 @@
 
     // triggered event after user input
     $("#word").keypress(function(event) {
+        var text = document.getElementById('word').value;
         var lastLetter = String.fromCharCode(event.which);
         var success;
 
