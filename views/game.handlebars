@@ -1,0 +1,39 @@
+<h1>Available letters</h1>
+{{#each letters}}
+    {{this}}
+{{/each}}
+
+<p id="w">
+
+
+{{#each words}}
+  <li>{{this}}</li>
+  {{/each}}
+
+
+</p>
+
+<input type="text" id="word" onkeyup="provideFeedback()">
+<div id="feedback"></div>
+
+<script>
+    document.getElementById("word").value = "";
+    function provideFeedback() {
+        var text = document.getElementById("word").value;
+        console.log(text);
+        var word = document.getElementById("w").innerHTML;
+        console.log(word);
+        // var text = document.getElementById("word").value;
+        var feedback = document.getElementById("feedback");
+        var ans = checkSpelling(text, word);
+        if (ans) feedback.innerHTML = "You are doing so well I'm proud of you son";
+        else feedback.innerHTML = "boo";
+    }
+
+    function checkSpelling(a, b) {
+        for (var i = 0; i < a.length; i++) {
+            if (a[i] != b[i]) return false;
+        }
+        return true;
+    }
+</script>
