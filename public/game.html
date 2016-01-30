@@ -28,11 +28,30 @@
                 <li class="word">Palabra</li>
             </ul>
         </div>
-        <div id="content">
-            <form id="input-form">
-                <input type="text" id="input-text" placeholder="Type a word!"></textarea>
-                <label id="feedback">FEEDBACK</label>
-            </form>
-        </div>
+        <form id="input-form">
+            <input type="text" id="input-text" placeholder="Type a word!"></textarea>
+            <label id="feedback">FEEDBACK</label>
+        </form>
     </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>Available letters</h2>
+<div id="available-letters"></div>
+<h2>Words</h2>
+<div id="words"></div>
+<form id="input-form">
+    <input type="text" id="word" onkeyup="provideFeedback(event)">
+    <div id="feedback"></div>
+</form>
