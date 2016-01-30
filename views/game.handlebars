@@ -1,9 +1,8 @@
 <h1>Available letters</h1>
-<div id="letters">
-
-</div>
-
-<p id="w">
+<div id="letters"></div>
+<h1>Words</h1>
+<div id="words"></div>
+<!-- <p id="w">
 
 
 {{#each words}}
@@ -11,7 +10,7 @@
   {{/each}}
 
 
-</p>
+</p> -->
 
 <input type="text" id="word" onkeyup="provideFeedback(event)">
 <div id="feedback"></div>
@@ -30,15 +29,27 @@
     // update the alphabet after a player has used a letter
     socket.on('alphabet update', function(alphabet) {
         var lettersDiv = document.getElementById('letters');
+        lettersDiv.innerHTML = '';
         var ul = document.createElement('ul');
-
-        var letters = document.getElementById("letters");
         for (var i = 0; i < alphabet.length; i++) {
             var li = document.createElement('li');
             ul.appendChild(li);
             li.innerHTML = alphabet[i];
         }
         lettersDiv.appendChild(ul);
+    });
+
+    // get the random set of words to be played with
+    socket.on('wordset', function(words) {
+        var wordsDiv = document.getElementById('words');
+        wordsDiv.innerHTML = '';
+        var ul = document.createElement('ul');
+        for (var i = 0; i < words.length; i++) {
+            var li = document.createElement('li');
+            ul.appendChild(li);
+            li.innerHTML = words[i];
+        }
+        wordsDiv.appendChild(ul);
     });
 
     // triggered event after user input
