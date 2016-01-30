@@ -18,8 +18,31 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
-<script src="js/alphabetHandler.js"></script>
+<!-- <script src="js/alphabetHandler.js"></script> -->
 <script>
+
+
+
+function removeLetter(letter, arr) {
+    var obj = {};
+    var index = arr.indexOf(letter);
+    console.log(index);
+    if (index < 0) {
+        obj.arr = arr;
+        obj.success = false;
+        return obj;
+    }
+    arr.splice(arr.indexOf(letter), 1);
+    obj.arr = arr;
+    obj.success = true;
+    return obj;
+}
+
+
+
+
+
+
     // clear the input text box
     document.getElementById("word").value = "";
 
@@ -27,25 +50,20 @@
     var socket = io();
     var currAlphabet;
     // update the alphabet after a player has used a letter
-    socket.on('alphabet update', function(alphabetStructure) {
+    socket.on('alphabet update', function(alphabet) {
+        currAlphabet = alphabet;
+
         var lettersDiv = document.getElementById('letters');
-        var success = alphabetStructure.success;
-        var alphabet = alphabetStructure.arr;
         // alert(alphabet);
         lettersDiv.innerHTML = '';
         var ul = document.createElement('ul');
-        currAlphabet = alphabetStructure;
-        // if (success === true) {
-            for (var i = 0; i < alphabet.length; i++) {
-                var li = document.createElement('li');
-                ul.appendChild(li);
-                li.innerHTML = alphabet[i];
-                console.log(alphabet[i]);
-            }
-            lettersDiv.appendChild(ul);
-        // }
-        // else {
-        // }
+        for (var i = 0; i < alphabet.length; i++) {
+            var li = document.createElement('li');
+            ul.appendChild(li);
+            li.innerHTML = alphabet[i];
+            console.log(alphabet[i]);
+        }
+        lettersDiv.appendChild(ul);
     });
 
     // get the random set of words to be played with
@@ -71,9 +89,11 @@
 
         }
         else {
-            socket.emit('key add', lastLetter);
-            return currAlphabet.success;
-            // return false;
+            var alphabetStructure = removeLetter(lastLetter, currAlphabet);
+            var success = alphabetStructure.success;
+            var arr = alphabetStructure.arr;
+            socket.emit('alphabet update', arr);
+            return success;
         }
 
         // following code won't run, trying stuff
