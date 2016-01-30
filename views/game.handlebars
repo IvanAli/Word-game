@@ -38,6 +38,11 @@ function removeLetter(letter, arr) {
     return obj;
 }
 
+function addLetter(letter, arr) {
+    arr.push(letter);
+    arr.sort();
+    return arr;
+}
 
 
 
@@ -86,7 +91,10 @@ function removeLetter(letter, arr) {
         // alert(event.which);
         if (event.which == 8) {
             // backslash key was pressed
-
+            var deletedLetter = text.charAt(text.length - 1);
+            console.log(deletedLetter);
+            var arr = addLetter(deletedLetter, currAlphabet);
+            socket.emit('alphabet update', arr);
         }
         else {
             var alphabetStructure = removeLetter(lastLetter, currAlphabet);
