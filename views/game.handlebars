@@ -2,17 +2,7 @@
 <div id="letters"></div>
 <h2>Words</h2>
 <div id="words"></div>
-<!-- <p id="w">
-
-
-{{#each words}}
-  <li>{{this}}</li>
-  {{/each}}
-
-
-</p> -->
-
-<input type="text" id="word" placeholder="Type a word!" />
+<input type="text" id="word" placeholder="Type a word!">
 <div id="feedback"></div>
 
 <style>
@@ -46,30 +36,79 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
 <!-- <script src="js/alphabetHandler.js"></script> -->
+
+
 <script>
+    function getMatchingWordsIndex(text) {
+        var arr = [];
+        var regex = new RegExp('^' + text);
+        for (var i = 0; i < currWords.length; i++) {
+            if (regex.test(currWords[i].toLowerCase())) {
+                arr.push(i);
+            }
+        }
+        return arr;
+    }
+
+    // credits to Jibberboy2000 from Stack Overflow
+    function htmlStripper(str) {
+        str=str.replace(/<br>/gi, "\n");
+        str=str.replace(/<p.*>/gi, "\n");
+        str=str.replace(/<a.*href="(.*?)".*>(.*?)<\/a>/gi, " $2 (Link->$1) ");
+        str=str.replace(/<(?:.|\s)*?>/g, "");
+        return str;
+    }
+
+    function colorWord(text) {
+        var arr = getMatchingWordsIndex(text);
+        for (var i = 0; i < arr.length; i++) {
+            var word = document.getElementById('word' + arr[i]);
+            var wordTxt = word.innerHTML;
+
+            // free the text from any html tags
+            wordTxt = htmlStripper(wordTxt);
+
+            if (text.length > 0) {
+                var html = '';
+                html = '<span style="color: red;">';
+                // alert(wordTxt.length);
+                for (var j = 0; j < wordTxt.length; j++) {
+                    html += wordTxt[j];
+                    if (j == text.length - 1) html += '</span>';
+                }
+                console.log(html);
+                word.innerHTML = '';
+                word.innerHTML = html;
+            }
+            else {
+                word.innerHTML = wordTxt;
+            }
+        }
+    }
 
 
-
-function removeLetter(letter, arr) {
-    var obj = {};
-    var index = arr.indexOf(letter);
-    console.log("deleted index " + index);
-    if (index < 0) {
+    function removeLetter(letter, arr) {
+        var obj = {};
+        var index = arr.indexOf(letter);
+        console.log("deleted index " + index);
+        if (index < 0) {
+            obj.arr = arr;
+            obj.success = false;
+            return obj;
+        }
+        arr.splice(arr.indexOf(letter), 1);
         obj.arr = arr;
-        obj.success = false;
+        obj.success = true;
         return obj;
     }
-    arr.splice(arr.indexOf(letter), 1);
-    obj.arr = arr;
-    obj.success = true;
-    return obj;
-}
 
-function addLetter(letter, arr) {
-    arr.push(letter);
-    arr.sort();
-    return arr;
-}
+    
+
+    function addLetter(letter, arr) {
+        arr.push(letter);
+        arr.sort();
+        return arr;
+    }
 
 
     //redefines the width and margin of the element that displays the alphabet
@@ -84,13 +123,13 @@ function addLetter(letter, arr) {
         //document.getElementById('available-letters-list').css.attr('margin-left', newMargin + "!important");
     }
 
-
     // clear the input text box
     document.getElementById("word").value = "";
 
     // init client socket
     var socket = io();
     var currAlphabet;
+    var currWords;
     // update the alphabet after a player has used a letter
     socket.on('alphabet update', function(alphabet) {
         currAlphabet = alphabet;
@@ -103,44 +142,57 @@ function addLetter(letter, arr) {
             var li = document.createElement('li');
             ul.appendChild(li);
             li.innerHTML = alphabet[i];
-            console.log(alphabet[i]);
         }
         lettersDiv.appendChild(ul);
     });
 
     // get the random set of words to be played with
     socket.on('wordset', function(words) {
+        currWords = words;
         var wordsDiv = document.getElementById('words');
         wordsDiv.innerHTML = '';
         var ul = document.createElement('ul');
         for (var i = 0; i < words.length; i++) {
             var li = document.createElement('li');
+            li.id = 'word' + i;
             ul.appendChild(li);
             li.innerHTML = words[i];
         }
         wordsDiv.appendChild(ul);
     });
 
+    $("#word").keyup(function(event) {
+        var text = document.getElementById('word').value;
+        colorWord(text);
+    });
+
     // triggered event after user input
     $("#word").keypress(function(event) {
         divResize(currAlphabet.length);
-        var text = document.getElementById("word").value;
+        var text = document.getElementById('word').value;
         var lastLetter = String.fromCharCode(event.which);
+        var success;
+
         // alert(event.which);
         if (event.which == 8) {
             // backslash key was pressed
             var deletedLetter = text.charAt(text.length - 1);
             console.log(deletedLetter);
-            var arr = addLetter(deletedLetter, currAlphabet);
+            var arr = addLetter(deletedLetter.toLowerCase(), currAlphabet);
             socket.emit('alphabet update', arr);
+            success = true;
         }
         else {
-            var alphabetStructure = removeLetter(lastLetter, currAlphabet);
-            var success = alphabetStructure.success;
+            var alphabetStructure = removeLetter(lastLetter.toLowerCase(), currAlphabet);
+            success = alphabetStructure.success;
             var arr = alphabetStructure.arr;
             socket.emit('alphabet update', arr);
-            return success;
         }
+
+        // find matching words to what's been typed and color them
+
+        return success;
+
 
         // following code won't run, trying stuff
     //     console.log(text);
@@ -161,4 +213,5 @@ function addLetter(letter, arr) {
         }
         return true;
     }
+        
 </script>
