@@ -9,19 +9,27 @@ var handlebars = require('express3-handlebars').create({ defaultLayout:'main' })
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 
+// define set of words
+
+
 loader.fillDictionary('/usr/share/dict/words');
 
+var words = loader.getRandomWordSet(5);
+
 app.get('/', function(request, response) {
-    words = [];
-    for (var i = 0; i < 5; i++) words.push(loader.getRandomWord());
-    // console.log(words.length);
-    // console.log(alphabet.letters);
-    response.render('game', {words: words, letters: alphabet.letters});
+    response.render('game');
 });
 
 io.on('connection', function(socket) {
     // send the alphabet to every user that gets connected (this is the full alphabet)
     io.emit('alphabet update', alphabet.letters);
+
+    // send the set of random words to the user
+    io.emit('wordset', words);
+
+    var address = socket.handshake.address;
+    console.log("Connection from: " + address);
+
     console.log('User connected');
     socket.on('disconnect', function() {
         console.log('User disconnected');
