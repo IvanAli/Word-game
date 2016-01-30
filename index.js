@@ -12,7 +12,7 @@ app.set('view engine', 'handlebars');
 // define set of words
 
 
-loader.fillDictionary('/usr/share/dict/words');
+loader.fillDictionary('words');/*/usr/share/dict*/
 
 var words = loader.getRandomWordSet(5);
 
