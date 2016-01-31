@@ -1,5 +1,15 @@
-{{player.nickname}} <span id="playerId">{{player.id}}</span> <span style="display: none;" id="playercolor">{{player.color}}</span>
-<div id="wordCounter">{{player.wordCounter}}</div>
+<span style="display: none;">{{player.nickname}}</span> <span style="display: none;" id="playerId">{{player.id}}</span> <span style="display: none;" id="playercolor">{{player.color}}</span>
+<div style="display: none;" id="wordCounter">{{player.wordCounter}}</div>
+<div id="players">
+    <table>
+    <thead>
+        <th>Place</th>
+        <th>Player</th>
+        <th>Word Count</th>
+    </thead>
+    <tbody></tbody>
+    </table>
+</div>
 <h2>Available letters</h2>
 <div id="letters"></div>
 <h2>Words</h2>
@@ -149,8 +159,12 @@
 
     // init client socket
     var socket = io();
+
+    // important variables
     var currAlphabet;
     var currWords;
+    var currPlayers;
+
     // update the alphabet after a player has used a letter
     socket.on('alphabet update', function(alphabet) {
         currAlphabet = alphabet;
@@ -196,6 +210,41 @@
     socket.on('update counter', function(player) {
         var wcounter = document.getElementById('wordCounter');
         wcounter.innerHTML = player.wordCounter;
+    });
+
+    // update the list of players
+    socket.on('update players', function(players) {
+        // pending to add: current word being typed
+        currPlayers = players;
+        console.log('updating players', players);
+        var divPlayers = document.getElementById('players');
+        var table = divPlayers.getElementsByTagName('table')[0];
+        var tbody = table.getElementsByTagName('tbody')[0];
+        tbody.innerHTML = '';
+        for (var id in players) {
+            if (players.hasOwnProperty(id)) {
+                var tr = document.createElement('tr');
+                var tdplace = document.createElement('td');
+                var tdnick = document.createElement('td');
+                var tdwc = document.createElement('td');
+
+                // place is not working yet
+                var placenode = document.createTextNode(players[id].place);
+                var nicknode = document.createTextNode(players[id].nickname);
+                var wcnode = document.createTextNode(players[id].wordCounter);
+
+                // appending party
+                tdplace.appendChild(placenode);
+                tdnick.appendChild(nicknode);
+                tdwc.appendChild(wcnode);
+
+                tr.appendChild(tdplace);
+                tr.appendChild(tdnick);
+                tr.appendChild(tdwc);
+
+                tbody.appendChild(tr);
+            }
+        }
     });
 
     $("#word").keyup(function(event) {

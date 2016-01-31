@@ -22,6 +22,10 @@ var deleteEntry = function() {
 
 }
 
+function getPlayers() {
+    return nicknames;
+}
+
 function getPlayer(id) {
     return nicknames[id];
 }
@@ -35,5 +39,6 @@ module.exports = {
     addEntry: addEntry,
     deleteEntry: deleteEntry,
     getPlayer: getPlayer,
+    getPlayers: getPlayers,
     increaseWordCounter: increaseWordCounter
 }
