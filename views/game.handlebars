@@ -6,6 +6,7 @@
         <th>Place</th>
         <th>Player</th>
         <th>Word Count</th>
+        <th>Typing</th>
     </thead>
     <tbody></tbody>
     </table>
@@ -213,6 +214,13 @@
         wcounter.innerHTML = player.wordCounter;
     });
 
+    // update a player's typing
+    socket.on('update typing', function(player) {
+        console.log('typing now', player.typing);
+        var typing = document.getElementById(player.id).getElementsByTagName('td')[3];
+        typing.innerHTML = player.typing;
+    });
+
     // update the list of players
     socket.on('update players', function(players) {
         // pending to add: current word being typed
@@ -230,20 +238,24 @@
                 var tdplace = document.createElement('td');
                 var tdnick = document.createElement('td');
                 var tdwc = document.createElement('td');
+                var tdtyping = document.createElement('td');
 
                 // place is not working yet
                 var placenode = document.createTextNode(players[id].place);
                 var nicknode = document.createTextNode(players[id].nickname);
                 var wcnode = document.createTextNode(players[id].wordCounter);
+                var typingnode = document.createTextNode(players[id].typing);
 
                 // appending party
                 tdplace.appendChild(placenode);
                 tdnick.appendChild(nicknode);
                 tdwc.appendChild(wcnode);
+                tdtyping.appendChild(typingnode);
 
                 tr.appendChild(tdplace);
                 tr.appendChild(tdnick);
                 tr.appendChild(tdwc);
+                tr.appendChild(tdtyping);
 
                 tbody.appendChild(tr);
             }
@@ -254,9 +266,12 @@
         var text = document.getElementById('word').value;
         colorWord(text);
         var index = isWordDone(text);
+
+        var playerId = document.getElementById('playerId').innerHTML;
+        console.log('player ip address:', playerId);
+        socket.emit('update typing', playerId, text);
         if (index != -1) {
             socket.emit('new word', index);
-            var playerId = document.getElementById('playerId').innerHTML;
             socket.emit('update counter', playerId);
         }
     });

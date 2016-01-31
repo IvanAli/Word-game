@@ -13,9 +13,14 @@ var addEntry = function(nickname, ip) {
         color: getRandomHexColor(),
         wordCounter: 0,
         place: 1,
-        number: currId++
+        number: currId++,
+        typing: ''
     }
     return nicknames[ip];
+}
+
+var setTyping = function(ip, text) {
+    nicknames[ip].typing = text;
 }
 
 var deleteEntry = function(ip) {
@@ -40,5 +45,6 @@ module.exports = {
     deleteEntry: deleteEntry,
     getPlayer: getPlayer,
     getPlayers: getPlayers,
-    increaseWordCounter: increaseWordCounter
+    increaseWordCounter: increaseWordCounter,
+    setTyping: setTyping
 }

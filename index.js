@@ -80,6 +80,12 @@ io.on('connection', function(socket) {
         io.emit('new word', words, index);
     });
 
+    // update what every user is typing
+    socket.on('update typing', function(id, text) {
+        nicknameTable.setTyping(id, text);
+        io.emit('update typing', nicknameTable.getPlayer(id));
+    });
+
     socket.on('update counter', function(id) {
         console.log(id);
         console.log(nicknameTable.getPlayer(id).id);
