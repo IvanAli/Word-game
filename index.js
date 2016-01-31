@@ -69,7 +69,8 @@ io.on('connection', function(socket) {
 
     console.log('User connected');
     socket.on('disconnect', function() {
-        console.log('User disconnected');
+        console.log('User disconnected:', ipaddress);
+        nicknameTable.deleteEntry(ipaddress);
     });
 
     socket.on('new word', function(index) {
@@ -81,7 +82,7 @@ io.on('connection', function(socket) {
 
     socket.on('update counter', function(id) {
         console.log(id);
-        console.log(nicknameTable.getPlayer(id).ip);
+        console.log(nicknameTable.getPlayer(id).id);
         var wc = nicknameTable.increaseWordCounter(id);
         // console.log(nicknameTable.getPlayer(id).wordCounter);
         io.emit('update counter', nicknameTable.getPlayer(id));

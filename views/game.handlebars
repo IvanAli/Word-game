@@ -208,7 +208,8 @@
 
     // update a player's word counter
     socket.on('update counter', function(player) {
-        var wcounter = document.getElementById('wordCounter');
+        console.log('updating the counter', player.wordCounter);
+        var wcounter = document.getElementById(player.id).getElementsByTagName('td')[2];
         wcounter.innerHTML = player.wordCounter;
     });
 
@@ -224,6 +225,8 @@
         for (var id in players) {
             if (players.hasOwnProperty(id)) {
                 var tr = document.createElement('tr');
+                tr.setAttribute('id', players[id].id);
+
                 var tdplace = document.createElement('td');
                 var tdnick = document.createElement('td');
                 var tdwc = document.createElement('td');

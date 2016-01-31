@@ -7,32 +7,32 @@ function getRandomHexColor() {
 }
 
 var addEntry = function(nickname, ip) {
-    nicknames[currId] = {
-        id: currId,
+    nicknames[ip] = {
+        id: ip,
         nickname: nickname,
         color: getRandomHexColor(),
         wordCounter: 0,
         place: 1,
-        ip: ip
+        number: currId++
     }
-    return nicknames[currId++];
+    return nicknames[ip];
 }
 
-var deleteEntry = function() {
-
+var deleteEntry = function(ip) {
+    delete nicknames[ip];
 }
 
 function getPlayers() {
     return nicknames;
 }
 
-function getPlayer(id) {
-    return nicknames[id];
+function getPlayer(ip) {
+    return nicknames[ip];
 }
 
-function increaseWordCounter(id) {
-    nicknames[id].wordCounter++;
-    return nicknames[id].wordCounter;
+function increaseWordCounter(ip) {
+    nicknames[ip].wordCounter++;
+    return nicknames[ip].wordCounter;
 }
 
 module.exports = {
