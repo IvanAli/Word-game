@@ -4,6 +4,7 @@ var alphabet = require('./libs/alphabet.js');
 var nicknameTable = require('./libs/nicknameTable.js');
 var app = express();
 var http = require('http').Server(app);
+// var http = require('http');
 var io = require('socket.io')(http);
 
 var handlebars = require('express3-handlebars').create({ defaultLayout:'main' });
@@ -19,12 +20,15 @@ var words = loader.getRandomWordSet(5);
 var ipaddress;
 
 app.get('/', function(request, response) {
-    response.render('pickname', {host: http.address().address});
+    response.render('pickname');
 });
 
 app.get('/game', function(request, response) {
     var nickname = request.query['nickname'];
     var player = nicknameTable.addEntry(nickname, ipaddress);
+    io.sockets.on('connection', function(socket) {
+        socket.emit('update players', nicknameTable.getPlayers());
+    });
     response.render('game', {player: player});
 });
 
@@ -65,7 +69,8 @@ io.on('connection', function(socket) {
 
     console.log('User connected');
     socket.on('disconnect', function() {
-        console.log('User disconnected');
+        console.log('User disconnected:', ipaddress);
+        nicknameTable.deleteEntry(ipaddress);
     });
 
     socket.on('new word', function(index) {
@@ -75,21 +80,38 @@ io.on('connection', function(socket) {
         io.emit('new word', words, index);
     });
 
+    // update what every user is typing
+    socket.on('update typing', function(id, text) {
+        nicknameTable.setTyping(id, text);
+        io.emit('update typing', nicknameTable.getPlayer(id));
+    });
+
     socket.on('update counter', function(id) {
         console.log(id);
-        console.log(nicknameTable.getPlayer(id).ip);
+        console.log(nicknameTable.getPlayer(id).id);
         var wc = nicknameTable.increaseWordCounter(id);
         // console.log(nicknameTable.getPlayer(id).wordCounter);
         io.emit('update counter', nicknameTable.getPlayer(id));
     });
-    // socket.on('key add', function(letter) {
-    //     // remove the letter typed in from the alphabet
-    //     console.log("key pressed: " + letter);
-    //     var alphabetStructure = alphabet.removeLetter(letter, alphabet.letters);
-    //     io.emit('alphabet update', alphabetStructure);
-    // });
 });
 
-http.listen(3000, function() {
-    console.log("Express running on port 3000");
+app.set('port', process.env.PORT || 8080);
+// app.set('host', process.env.PORT || '192.168.0.27');
+
+
+
+// http.createServer(app).listen(app.get('port'), app.get('host'), function() {
+//     console.log('Express server listening on port ' + app.get('port'));
+// });
+
+// http.createServer(app).listen(3000, function() {
+//     console.log('Express server listening on port ' + 3000);
+// });
+
+// http.listen(3000, function() {
+//     console.log('Express server listening on port ' + 3000 + '. Press Ctrl + C to terminate');
+// });
+
+http.listen(app.get('port'), function() {
+    console.log('Express server listening on port ' + 3000 + '. Press Ctrl + C to terminate');
 });
